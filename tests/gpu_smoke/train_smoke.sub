@@ -1,0 +1,22 @@
+# Submit from tests/gpu_smoke/ after `bash prep/make_job_tarballs.sh`.
+container_image = docker://pytorch/pytorch:2.1.0-cuda11.8-cudnn8-devel
+universe = container
+executable = train_smoke.sh
+environment = "MAX_UPDATE=300 VALID_INTERVAL=100 SAVE_INTERVAL=100"
+request_gpus = 1
+request_cpus = 8
+request_memory = 48GB
+request_disk = 60GB
++GPUJobLength = "short"
+gpus_minimum_capability = 8.0
+gpus_minimum_memory = 40000M
+requirements = (OpSysMajorVer == 9) && (Target.HasCHTCStaging == true)
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+transfer_input_files = ../../train/setup_train.sh, ../../train/run_train.sh, ../../train/requirements.txt, ../../train/fairseq.tar.gz, ../../train/manifest_full32.tar.gz
+transfer_output_files = train_smoke_result.txt
+output = train_smoke_$(Cluster).out
+error  = train_smoke_$(Cluster).err
+log    = train_smoke_$(Cluster).log
+notification = Never
+queue 1

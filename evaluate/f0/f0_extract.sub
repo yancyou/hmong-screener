@@ -1,0 +1,20 @@
+container_image = docker://pytorch/pytorch:2.1.0-cuda11.8-cudnn8-devel
+universe = container
+executable = setup_f0.sh
+arguments = $(shard)
+request_cpus = 16
+request_memory = 24GB
+request_disk = 20GB
+requirements = (OpSysMajorVer == 9) && (Target.HasCHTCStaging == true) && (Machine =!= "gpu4003.chtc.wisc.edu") && (Machine =!= "txie-dsigpu4000.chtc.wisc.edu")
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+# Submit from evaluate/f0/ after `python3 evaluate/f0/make_f0_shards.py` (run from the repo root).
+transfer_input_files = setup_f0.sh, extract_f0_features.py, ../../build/f0/f0_shard$(shard).csv
+transfer_output_files = f0_shard$(shard).npz
+transfer_output_remaps = "f0_shard$(shard).npz = ../../build/f0/f0_shard$(shard).npz"
+output = ../../build/f0/f0_$(shard)_$(Cluster).out
+error  = ../../build/f0/f0_$(shard)_$(Cluster).err
+log    = ../../build/f0/f0_$(Cluster).log
+notification = Never
+priority = 48
+queue shard from ../../build/f0/f0_shard_list.txt

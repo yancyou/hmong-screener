@@ -1,0 +1,84 @@
+{
+ "P_joint": {
+  "pass@0.995": {
+   "thr": 0.994,
+   "pass_rate": 0.2167,
+   "missed": 47,
+   "of": 3160,
+   "actual_npv": 0.99502
+  },
+  "pass@0.99": {
+   "thr": 0.93347,
+   "pass_rate": 0.4962,
+   "missed": 216,
+   "of": 3160,
+   "actual_npv": 0.99001
+  }
+ },
+ "P_word": {
+  "pass@0.995": {
+   "thr": 0.97344,
+   "pass_rate": 0.7912,
+   "missed": 172,
+   "of": 1572,
+   "actual_npv": 0.99501
+  },
+  "pass@0.99": {
+   "thr": 0.46397,
+   "pass_rate": 0.9113,
+   "missed": 397,
+   "of": 1572,
+   "actual_npv": 0.99
+  }
+ },
+ "P_tone": {
+  "pass@0.995": {
+   "thr": 0.82914,
+   "pass_rate": 0.657,
+   "missed": 143,
+   "of": 1588,
+   "actual_npv": 0.995
+  },
+  "pass@0.99": {
+   "thr": 0.21521,
+   "pass_rate": 0.8,
+   "missed": 348,
+   "of": 1588,
+   "actual_npv": 0.99002
+  }
+ },
+ "operating_points_P_joint": {
+  "miss<=20%": {
+   "thr": 0.2967,
+   "auto_pass": 0.7174,
+   "review": 0.2826,
+   "npv": 0.97978
+  },
+  "miss<=10%": {
+   "thr": 0.77994,
+   "auto_pass": 0.5902,
+   "review": 0.4098,
+   "npv": 0.98771
+  },
+  "miss<=5%": {
+   "thr": 0.96553,
+   "auto_pass": 0.4312,
+   "review": 0.5688,
+   "npv": 0.99159
+  },
+  "miss<=2%": {
+   "thr": 0.99137,
+   "auto_pass": 0.2677,
+   "review": 0.7323,
+   "npv": 0.99451
+  }
+ },
+ "_basis": {
+  "model": "v1 (full32_foldfinal_infer.pt)",
+  "scores": "4-fold leave-speakers-out, 按折无泄漏先验, 部署同款候选全集",
+  "n_clips": 43573,
+  "n_err": 3160,
+  "labels": "full33_index.csv label (三源合并)",
+  "dated": "2026-09-22"
+ }
+}

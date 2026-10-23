@@ -1,0 +1,23 @@
+# Retrain one fold with the v1 recipe and save the best checkpoint on staging (see train_to_staging.sh).
+# Used on 2026-10-23 to replace the lost v1 fold-1 model:  condor_submit retrain.sub
+container_image = docker://pytorch/pytorch:2.1.0-cuda11.8-cudnn8-devel
+universe = container
+executable = train_to_staging.sh
+arguments = 1 /staging/x/xouyang7/full32_ckpts/full32_fold1_retrain_best.pt
+request_gpus = 1
+request_cpus = 8
+request_memory = 48GB
+request_disk = 60GB
++GPUJobLength = "medium"
+gpus_minimum_capability = 8.0
+gpus_minimum_memory = 40000M
+requirements = (OpSysMajorVer == 9) && (Target.HasCHTCStaging == true)
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+transfer_input_files = setup_train.sh, run_train.sh, requirements.txt, fairseq.tar.gz, manifest_full32.tar.gz
+transfer_output_files = retrain_result.txt
+output = retrain_fold1_$(Cluster).out
+error  = retrain_fold1_$(Cluster).err
+log    = retrain_fold1_$(Cluster).log
+notification = Never
+queue 1

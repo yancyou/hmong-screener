@@ -1,0 +1,31 @@
+build/
+__pycache__/
+*.pyc
+# Participant data and internal notes. Never public: lab members restore them from the private
+# archive on CHTC staging (README, "Private files"). tests/verify.py fails if a tracked file holds a speaker code.
+*.wav
+data/speakers.json
+data/folds.json
+data/folds33.json
+data/split_foldfinal.json
+data/full32_index.csv
+data/full32_merged.csv
+data/full33_index.csv
+data/derived/
+data/sources/
+deploy/kit_docs/AUDIT.md
+deploy/website/smoke/clips.csv
+deploy/website/smoke/api_out_mix12.json
+docs/AUDIT.md
+docs/DELIVERY.html
+docs/FINDINGS.md
+tests/hf_env/
+# CHTC job outputs and generated job inputs
+*.out
+*.err
+*.log
+train/manifest_full32.tar.gz
+evaluate/manifest_full33.tar.gz
+evaluate/evalck_jobs.txt
+tests/gpu_smoke/*_result.txt
+tests/gpu_smoke/joblogs_*.tar.gz

@@ -1,0 +1,22 @@
+container_image = docker://pytorch/pytorch:2.1.0-cuda11.8-cudnn8-devel
+universe = container
+executable = setup_v3b.sh
+arguments = $(fold)
+request_gpus = 1
+request_cpus = 8
+request_memory = 48GB
+request_disk = 90GB
++GPUJobLength = "medium"
+gpus_minimum_capability = 8.0
+gpus_minimum_memory = 40G
+requirements = (OpSysMajorVer == 9) && (Target.HasCHTCStaging == true) && (Machine =!= "gpu4003.chtc.wisc.edu") && (Machine =!= "txie-dsigpu4000.chtc.wisc.edu")
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+transfer_input_files = setup_v3b.sh, run_v3b.sh, extract_losses.py, requirements.txt, fairseq.tar.gz, manifest_full33b.tar.gz, full33_index.csv
+transfer_output_files = joblogs_v3b_$(fold).tar.gz
+output = v3b_$(fold)_$(Cluster).out
+error  = v3b_$(fold)_$(Cluster).err
+log    = v3b_$(Cluster).log
+notification = Error
+priority = 47
+queue fold from jobs_v3b.txt

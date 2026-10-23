@@ -1,0 +1,25 @@
+# Submit from tests/gpu_smoke/ after `bash prep/make_job_tarballs.sh`. Recomputes held-out losses of the v1 fold-0 model
+# for the first 1,500 fold-0 clips with the repo's evaluation scripts; tests/compare_losses.py then compares them with
+# the stored /staging/x/xouyang7/evals33/v1_fold0_loss.npz.
+container_image = docker://pytorch/pytorch:2.1.0-cuda11.8-cudnn8-devel
+universe = container
+executable = ../../evaluate/setup_evalck.sh
+arguments = 0 /staging/x/xouyang7/full32_ckpts/full32_fold0_best.pt repocheck
+environment = "HMONG_EVALS_OUT=/staging/x/xouyang7/build_check/evals EXTRACT_ARGS='--max-n 1500'"
+request_gpus = 1
+request_cpus = 4
+request_memory = 32GB
+request_disk = 40GB
++GPUJobLength = "short"
+gpus_minimum_capability = 8.0
+gpus_minimum_memory = 20G
+requirements = (OpSysMajorVer == 9) && (Target.HasCHTCStaging == true)
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+transfer_input_files = ../../evaluate/extract_losses.py, ../../train/requirements.txt, ../../train/fairseq.tar.gz, ../../evaluate/manifest_full33.tar.gz, ../../data/full33_index.csv
+transfer_output_files = joblogs_evalck_repocheck_0.tar.gz
+output = eval_smoke_$(Cluster).out
+error  = eval_smoke_$(Cluster).err
+log    = eval_smoke_$(Cluster).log
+notification = Never
+queue 1

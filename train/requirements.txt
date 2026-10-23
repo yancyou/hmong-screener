@@ -1,0 +1,12 @@
+yt-dlp
+pydub
+noisereduce
+soundfile
+scipy
+demucs
+audiomentations
+numpy<2.0
+pandas
+jiwer
+editdistance
+tensorboard

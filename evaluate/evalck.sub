@@ -1,0 +1,22 @@
+container_image = docker://pytorch/pytorch:2.1.0-cuda11.8-cudnn8-devel
+universe = container
+executable = setup_evalck.sh
+arguments = $(fold) $(ckpt) $(name)
+request_gpus = 1
+request_cpus = 4
+request_memory = 32GB
+request_disk = 40GB
++GPUJobLength = "short"
+gpus_minimum_capability = 8.0
+gpus_minimum_memory = 20G
+requirements = (OpSysMajorVer == 9) && (Target.HasCHTCStaging == true) && (Machine =!= "gpu4003.chtc.wisc.edu") && (Machine =!= "txie-dsigpu4000.chtc.wisc.edu")
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+transfer_input_files = setup_evalck.sh, extract_losses.py, ../train/requirements.txt, ../train/fairseq.tar.gz, manifest_full33.tar.gz, ../data/full33_index.csv
+transfer_output_files = joblogs_evalck_$(name)_$(fold).tar.gz
+output = evalck_$(name)_$(fold)_$(Cluster).out
+error  = evalck_$(name)_$(fold)_$(Cluster).err
+log    = evalck_$(Cluster).log
+notification = Never
+priority = 47
+queue fold,ckpt,name from evalck_jobs.txt

@@ -1,0 +1,14 @@
+# sha256  bytes  path under $HMONG_STAGING (/staging/x/xouyang7), computed 2026-10-23
+ead81e968ca52af16c90f0eea6a50371442f9eda2f2462ec6a31ad20323e7fa7    2220523520  full32_16k.tar
+1f5c992907ed37ae8aaec30c091a18b0b59bea80bf4dec8a44d890c62849d06f      46714880  full33_add_16k.tar
+b08927597f2c9eb2ebd7dcc3ac78ee4b5f6021cbac4b3a6c5a9deec445d80ed9    3808868242  xlsr_300m.pt
+8279711a33676c8d7c5ab01b1bcb1b41e0a64ab679e6c2254c10c7845ea3db66    1262101050  full32_ckpts/full32_foldfinal_infer.pt
+4634f22dc6d07ae64661f979adecd66f677df99f54fcc2cd18577f81e2f66e28    3785855894  full32_ckpts/full32_foldfinal_best.pt
+dd763f49a67687e7f414c503d49018df1fb031cca63d4fbc8f920672fb0a4e91    3785855894  full32_ckpts/full32_fold0_best.pt
+3ebdbe86f0af848f2834c4918b2b77716add55f24de53eefb1a8b4dc1ad97ade    3785855894  full32_ckpts/full32_fold1_best.pt
+384508985f3f9f613d99a2e4ee1f50629c2474d20a041099cc6e9a2d4a0753ef    3785855894  full32_ckpts/full32_fold2_best.pt
+3ebdbe86f0af848f2834c4918b2b77716add55f24de53eefb1a8b4dc1ad97ade    3785855894  full32_ckpts/full32_fold3_best.pt
+7d1143f6219cc2c0fc06089f0a4adf245890435e7fe411d2e410ca98a308c10e    1309593600  hf_bundle.tar
+4876e0dfd77340f9cb893a479d50cf82dd023f4e0a4c86e4e56fa34a6058aa42        765187  ctc_deploy_kit.tar.gz
+d36c2dd394b21397fa20247e9eab6556dcb84f524749caa8ee3167a05a6baf3a      18590630  upstream/hmong_audio_software-main_20261004.tar.gz
+d99028d018f107ee021a8e6f7456a4ce63970c738342c9208dc70b9e55a7bec2    1262105987  cosine_checkpoint_slim.pt

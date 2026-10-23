@@ -1,0 +1,4 @@
+0 /staging/x/xouyang7/full32_ckpts/full32_fold0_best.pt v1check
+1 /staging/x/xouyang7/full32_ckpts/full32_fold1_best.pt v1check
+2 /staging/x/xouyang7/full32_ckpts/full32_fold2_best.pt v1check
+3 /staging/x/xouyang7/full32_ckpts/full32_fold3_best.pt v1check
