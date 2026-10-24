@@ -19,6 +19,7 @@ os.chdir(ROOT)
 ST = os.environ.get("HMONG_STAGING", "/staging/x/xouyang7")
 PRIVATE = os.path.exists("data/speakers.json") and os.path.isdir(ST)
 SCRUBBED = {"DEPLOY_WEB.md"}   # kit document edited after the kit was built: a speaker code removed for the public repository
+EXAMPLE_ID = {"webapp/GUI/DataCollectionPage.jsx", "webapp/INSTRUCTIONS_source.html"}   # "e.g. YX001", as on the live site
 results = []
 
 
@@ -56,27 +57,38 @@ def tar_hashes(path):
     return out
 
 
+def code_ast(src):
+    """The parsed code without docstrings: files that differ only in comments or docstrings compare equal."""
+    tree = ast.parse(src)
+    for n in list(ast.walk(tree)):
+        if isinstance(n, (ast.Module, ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)) and n.body \
+                and isinstance(n.body[0], ast.Expr) and isinstance(n.body[0].value, ast.Constant) \
+                and isinstance(n.body[0].value.value, str):
+            n.body = n.body[1:] or [ast.Pass()]
+    return ast.dump(tree)
+
+
 def compare_tars(new, old):
-    """Rebuilt archive versus deployed one. Python files whose code is unchanged (only comments differ) and
-    the documents in SCRUBBED count as matching; everything else must be byte-identical."""
+    """Rebuilt archive versus deployed one. Python files whose code is unchanged (only comments or docstrings
+    differ) and the documents in SCRUBBED count as matching; everything else must be byte-identical."""
     a, b = tar_hashes(new), tar_hashes(old)
     diff = [k for k in a if a[k] != b.get(k)]
 
     def read(path, name):
         with tarfile.open(path) as t: return t.extractfile(name).read()
     comments = [k for k in diff if k.endswith(".py") and k in b
-                and ast.dump(ast.parse(read(new, k))) == ast.dump(ast.parse(read(old, k)))]
+                and code_ast(read(new, k)) == code_ast(read(old, k))]
     edited = [k for k in diff if os.path.basename(k) in SCRUBBED]
     bad = [k for k in diff if k not in comments and k not in edited] + [k for k in b if k not in a]
     detail = f"{len(a) - len(diff)}/{len(b)} files identical to {old}"
-    if comments: detail += f"; comments edited since: {comments}"
+    if comments: detail += f"; comments or docstrings edited since: {comments}"
     if edited: detail += f"; speaker codes removed since: {edited}"
     if bad: detail += f"; different: {bad[:5]}"
     return not bad, detail
 
 
-def code_files(ext):
-    return [p for p in glob.glob(f"**/*{ext}", recursive=True) if not p.startswith("build/")]
+def code_files(ext):   # webapp/fairseq is a third-party copy, checked by hand when it was added
+    return [p for p in glob.glob(f"**/*{ext}", recursive=True) if not p.startswith(("build/", "webapp/fairseq/"))]
 
 
 # ---------------------------------------------------------------- quick checks
@@ -101,10 +113,10 @@ def patch_payload():
 
 
 def secrets():
-    pat = re.compile(r"hf_[A-Za-z0-9]{30,}|ghp_[A-Za-z0-9]{20,}|FlyV1 |BEGIN (RSA|OPENSSH) PRIVATE")
-    hits = [p for p in code_files(".py") + code_files(".sh") + code_files(".md") + code_files(".sub") + code_files(".txt")
-            if p != "tests/verify.py" and pat.search(open(p, errors="ignore").read())]   # this file holds the patterns
-    return not hits, "no tokens or keys in code and docs" if not hits else f"found in {hits}"
+    pat = re.compile(r"hf_[A-Za-z0-9]{30,}|ghp_[A-Za-z0-9]{20,}|FlyV1 |BEGIN (RSA|OPENSSH) PRIVATE|drive\.google\.com/drive/folders/")
+    files = [p for e in (".py", ".sh", ".md", ".sub", ".txt", ".html", ".js", ".jsx") for p in code_files(e)]
+    hits = [p for p in files if p != "tests/verify.py" and pat.search(open(p, errors="ignore").read())]   # this file holds the patterns
+    return not hits, "no tokens, keys or shared-folder links in code and docs" if not hits else f"found in {hits}"
 
 
 def speaker_codes():
@@ -112,8 +124,12 @@ def speaker_codes():
     codes = sorted({s for f in json.load(open("data/folds33.json")).values() for s in f["test"]})
     pat = re.compile(r"(?i)(?<![A-Za-z0-9])(" + "|".join(map(re.escape, codes)) + r")(?![0-9])")
     tracked = run("git ls-files").stdout.split()
-    hits = [p for p in tracked if not p.endswith((".wav", ".npz", ".npy", ".gz", ".pt"))
-            and os.path.exists(p) and pat.search(open(p, errors="ignore").read())]
+
+    def text(p):
+        t = open(p, errors="ignore").read()
+        return t.replace("YX001", "") if p in EXAMPLE_ID else t
+    hits = [p for p in tracked if not p.endswith((".wav", ".npz", ".npy", ".gz", ".pt", ".pdf", ".png", ".so"))
+            and os.path.exists(p) and pat.search(text(p))]
     return not hits, f"none of the {len(codes)} speaker codes in {len(tracked)} tracked files" if not hits else f"found in {hits}"
 
 
@@ -182,20 +198,21 @@ def live():
     return r.returncode == 0, r.stdout.strip().splitlines()[-2] if r.stdout.strip() else r.stderr[-300:]
 
 
-ap = argparse.ArgumentParser(); ap.add_argument("--full", action="store_true"); ap.add_argument("--live", action="store_true")
-a = ap.parse_args()
-os.makedirs("build", exist_ok=True)
-for name, fn in (("python syntax", static_python), ("shell syntax", static_shell), ("server patch payload", patch_payload),
-                 ("secret scan", secrets)):
-    check(name, fn, private=False)
-for name, fn in (("speaker codes", speaker_codes), ("manifests and priors", manifests_and_priors),
-                 ("deployed model's split", deployed_split), ("deploy kit rebuild", kit)):
-    check(name, fn)
-if a.full:
-    for name, fn in (("label re-parse", labels_reparse), ("audio spot-check", audio_sample),
-                     ("website bundle rebuild", bundle), ("evaluation reruns", eval_reruns)):
+if __name__ == "__main__":
+    ap = argparse.ArgumentParser(); ap.add_argument("--full", action="store_true"); ap.add_argument("--live", action="store_true")
+    a = ap.parse_args()
+    os.makedirs("build", exist_ok=True)
+    for name, fn in (("python syntax", static_python), ("shell syntax", static_shell), ("server patch payload", patch_payload),
+                     ("secret scan", secrets)):
+        check(name, fn, private=False)
+    for name, fn in (("speaker codes", speaker_codes), ("manifests and priors", manifests_and_priors),
+                     ("deployed model's split", deployed_split), ("deploy kit rebuild", kit)):
         check(name, fn)
-if a.live:
-    check("live website", live)
-print(f"\n{sum(results)}/{len(results)} checks passed" + ("" if PRIVATE else " (others skipped: no private files)"))
-sys.exit(0 if all(results) else 1)
+    if a.full:
+        for name, fn in (("label re-parse", labels_reparse), ("audio spot-check", audio_sample),
+                         ("website bundle rebuild", bundle), ("evaluation reruns", eval_reruns)):
+            check(name, fn)
+    if a.live:
+        check("live website", live)
+    print(f"\n{sum(results)}/{len(results)} checks passed" + ("" if PRIVATE else " (others skipped: no private files)"))
+    sys.exit(0 if all(results) else 1)

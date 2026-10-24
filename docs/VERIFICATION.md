@@ -6,7 +6,8 @@ Every component was rerun from this repository and compared with the files actua
 
 | Check | How | Result |
 | --- | --- | --- |
-| Code health | Compile all 40 Python files, syntax-check 20 shell scripts, parse the server code the patch inserts, scan for tokens and keys | All pass; no secrets. pyflakes finds only unused imports. |
+| Code health | Compile all 44 Python files, syntax-check 21 shell scripts (the third-party fairseq copy in `webapp/` excluded), parse the server code the patch inserts, scan for tokens and keys | All pass; no secrets. pyflakes finds only unused imports. |
+| Privacy | Scan every published file for the 33 speaker codes and for shared-folder links | None, apart from the web app's example ID `YX001` (README, Known issues) |
 | Label parsing | `prep/parse_labels.py` on the raw Box file names, compared with the labels the deployed model used | 42,668 clips, 0 differences; speaker folds and priors identical |
 | Audio conversion | `prep/build_16k.py` (recovered from the session log) on 150 raw files from shard 3, compared with `full32_16k.tar` | 150 of 150 files byte-identical |
 | Deployed model's training data | `prep/make_manifests.py` with the pre-merge labels | Same 30 training speakers, 38,935 / 2,566 clips and 2,551 realized transcripts as `data/split_foldfinal.json`; letter dictionary identical to the model's |
@@ -14,8 +15,8 @@ Every component was rerun from this repository and compared with the files actua
 | Training pipeline (GPU) | `tests/gpu_smoke/train_smoke.sub`: the repository's training scripts in a fresh container, 300 updates | Trains, validates and saves a checkpoint (job 6982322, gpu2011) |
 | Evaluation pipeline (GPU) | `tests/gpu_smoke/eval_smoke.sub`: held-out losses of the fold-0 model for 1,500 clips | Identical to the stored losses (largest relative difference 0); job 6982323, dsigpu4000 |
 | Offline evaluation | Rerun `evaluate/select_model.py` and `evaluate/eval_combos.py` | Outputs identical to the stored `select_model.json` and `eval_combos.json` |
-| Deploy kit | `deploy/build_kit.sh` | 15 of 15 files identical to `/staging/x/xouyang7/ctc_deploy_kit.tar.gz` |
-| Website bundle | `deploy/website/build_bundle.sh`: archived web app + our patches + rebuilt pages + model | 1,536 of 1,536 files identical to the deployed `hf_bundle.tar` |
+| Deploy kit | `deploy/build_kit.sh` | 13 of 15 files identical to `/staging/x/xouyang7/ctc_deploy_kit.tar.gz`; `ctc_scorer.py` differs only in a comment and `DEPLOY_WEB.md` in one line, both edited to remove speaker codes before publication |
+| Website bundle | `deploy/website/build_bundle.sh`: `webapp/` + our patches + rebuilt pages + model | 1,533 of 1,536 files identical to the deployed `hf_bundle.tar`; the other 3 differ only in comments or docstrings (speaker codes removed before publication). Built from the archived web app before those edits: 1,536 of 1,536 identical |
 | Live website | 12 recordings with known results (`deploy/website/smoke/live_check.py`) | Matches the verified scores (largest difference 0.00001, no decision changed) |
 | Pitch classifier | Re-extract pitch features (8 CPU jobs, cluster 6982424) and retrain with `evaluate/f0/train_f0_classifier.py` | Pending |
 

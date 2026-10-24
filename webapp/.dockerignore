@@ -1,0 +1,4 @@
+GUI/node_modules
+**/__pycache__
+docs_screenshots
+*.pdf

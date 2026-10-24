@@ -1,0 +1,30 @@
+# Fly.io config for the combined web + API container.
+# Deploy:  fly launch --no-deploy   (first time, to create the app)
+#          fly deploy
+# Rename "app" to your chosen unique name before first deploy.
+app = "hmong-audio"
+primary_region = "ord"   # Chicago, 离 Madison 最近 (sea 已停用)
+swap_size_mb = 2048        # 吸收两个模型加载时的瞬时内存峰值
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  PORT = "8080"
+  EMBEDDING_LAYER = "-1"   # final encoder output
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "stop"      # 空闲时停机省钱 (有 swap 时不用 suspend)
+  auto_start_machines = true
+  min_machines_running = 0
+  [http_service.concurrency]
+    type = "requests"
+    hard_limit = 25
+    soft_limit = 20
+
+# Model load needs headroom: 8 GB is safe for the slim checkpoint.
+[[vm]]
+  size = "shared-cpu-2x"   # 新账号每台机器最多 2 核
+  memory = "4gb"            # 共享 CPU 每核最多 2 GB; 两模型稳态约 3 GB, 加载峰值 4.05 GB 由 swap 吸收

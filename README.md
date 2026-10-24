@@ -2,7 +2,7 @@
 
 The screener ranks a patient's recordings of a known Hmong word list so the likely mispronunciations come first. A closed-vocabulary CTC model (XLS-R 300M fine-tuned on 30 speakers) scores each recording against its target word and that word's likely confusions, and a pitch-based classifier adds a second tone check. It runs as the Batch Score page of the lab's Hmong audio web app at <https://youngxuan-hmong-screener.hf.space>.
 
-This repository holds everything we built: data preparation, training, evaluation, the deployed scorer, the patches that add it to the web app, website deployment and tests. The web app itself is a teammate's project and is not public; lab members find the version we patch archived on staging.
+This repository holds everything we built: data preparation, training, evaluation, the deployed scorer, the patches that add it to the web app, website deployment and tests. The web app itself is a teammate's project (tianyi0216); `webapp/` holds the version the website runs, published with the author's permission.
 
 ## Layout
 
@@ -13,6 +13,7 @@ This repository holds everything we built: data preparation, training, evaluatio
 | `train/` | CHTC job files for fine-tuning with the deployed (v1) recipe |
 | `evaluate/` | Held-out loss extraction (GPU), offline scoring and model comparison; `f0/` pitch classifier; `cosine/` comparison with the teammate's model |
 | `deploy/` | Scorer, model-side assets, web-app patches, deploy-kit documents, kit and website build scripts |
+| `webapp/` | The Hmong audio web app as deployed: FastAPI server, React pages and its own fairseq copy. `deploy/website/build_bundle.sh` adds our patches, scorer and model to it |
 | `tests/` | `verify.py` reproducibility checks and GPU smoke tests |
 | `research/` | Earlier experiments kept for reference (33-speaker reruns, model soups, voice-quality features); not needed to run the system |
 | `docs/` | Verification record |
@@ -111,7 +112,7 @@ python3 evaluate/f0/train_f0_classifier.py                   # -> build/f0_tone_
 
 ```bash
 bash deploy/build_kit.sh                  # lab-computer kit -> build/ctc_deploy_kit.tar.gz
-bash deploy/website/build_bundle.sh       # website bundle -> build/hf_bundle.tar
+bash deploy/website/build_bundle.sh       # website bundle: webapp/ + patches + model -> build/hf_bundle.tar (set HMONG_MODEL to a downloaded model)
 python3 deploy/website/deploy_to_hf.py    # upload, restart the Space, check 12 recordings of known result
 ```
 
@@ -134,9 +135,10 @@ The results of the checks run on 2026-10-23 are in `docs/VERIFICATION.md`.
 
 - **The v1 fold-1 evaluation used the wrong model.** `full32_fold1_best.pt` is a copy of the fold-3 model, which was trained on fold 1's test speakers, so earlier cross-validation numbers were too high. `docs/VERIFICATION.md` gives the corrected numbers and the retrained fold-1 model.
 - **The label merge cannot be rerun.** The Excel export it reads was not kept. `data/full32_merged.csv` keeps both the pre-merge `label` and `label_merged`, so every later step is reproducible.
-- **The web-app snapshot is reconstructed.** The teammate's repository commit is unknown; the archived copy was rebuilt from our deployed copy, and our patches applied to it reproduce the deployed website byte for byte.
+- **The web-app snapshot is reconstructed.** The teammate's repository commit is unknown; `webapp/` was rebuilt from our deployed copy, and with our patches it reproduces the deployed website (1,533 of 1,536 files byte-identical, the other 3 differ only in comments).
+- **The recording page's example speaker ID, `YX001`, is a participant code.** It is shown on the live site; replace it at the next deployment.
 - **Personal accounts.** The CHTC files and the Hugging Face Space belong to personal accounts and should move to lab-owned ones.
 
 ## License
 
-The code is released under the MIT License (`LICENSE`). `train/fairseq.tar.gz` is a snapshot of fairseq (MIT License, Meta Platforms; its license is inside the archive). The web app that `deploy/patches/` modifies belongs to its authors; the patch scripts quote short parts of it to find where to insert changes. No model weights, recordings or participant labels are distributed here.
+The code is released under the MIT License (`LICENSE`). `train/fairseq.tar.gz` is a snapshot of fairseq (MIT License, Meta Platforms; its license is inside the archive). `webapp/` is tianyi0216's web app, published with the author's permission; it has no license file of its own, so ask the author before reusing it. Its `fairseq/` folder is a modified fairseq (MIT License). For publication, the participant word list, the local-setup PDF and the link to the reference recordings were removed from it, and speaker codes in the comments of two code files were replaced with placeholders. The deployed model is distributed through the v1.0 release; no recordings or participant labels are distributed.

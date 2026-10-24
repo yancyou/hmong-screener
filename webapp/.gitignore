@@ -1,0 +1,21 @@
+# Large artifacts — never commit
+*.pt
+*.pth
+*.ckpt
+*.wav
+*.zip
+*.tgz
+
+# Runtime / build
+node_modules/
+dist/
+__pycache__/
+*.pyc
+_fallback_data/
+*.egg-info/
+build/
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/

@@ -1,0 +1,22 @@
+# Pinned to the versions verified working locally (see README deploy notes).
+# torch is installed separately from the CPU wheel index in the Dockerfile.
+numpy==2.2.6
+soundfile==0.13.1
+scipy==1.15.3
+omegaconf==2.0.6
+hydra-core==1.0.7
+antlr4-python3-runtime==4.8
+fastapi==0.117.1
+uvicorn==0.37.0
+pydantic==2.11.9
+python-multipart==0.0.20
+cython==3.1.4
+sacrebleu==2.5.1
+bitarray==3.7.1
+scikit-learn==1.7.2
+packaging==25.0
+regex==2025.9.18
+tqdm==4.67.1
+cffi==2.0.0
+pandas==2.3.2
+librosa==0.11.0

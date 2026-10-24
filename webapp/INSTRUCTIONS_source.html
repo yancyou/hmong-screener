@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hmong Audio Tool — Instructions</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm; }
+  * { box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { font-family: -apple-system, "Helvetica Neue", Arial, sans-serif; color: #1e293b; font-size: 10.5pt; line-height: 1.5; margin: 0; }
+  h1 { font-size: 24pt; margin: 0 0 2pt; color: #0f172a; letter-spacing: -0.5px; }
+  h2 { font-size: 15pt; margin: 20pt 0 6pt; color: #C5050C; border-bottom: 2px solid #f1d3d4; padding-bottom: 3px; }
+  h3 { font-size: 12pt; margin: 12pt 0 4pt; color: #0f172a; }
+  p { margin: 4pt 0; }
+  code { background: #f1f5f9; padding: 1px 5px; border-radius: 4px; font-family: "SF Mono", Menlo, monospace; font-size: 9pt; color: #b91c1c; }
+  .subtitle { color: #64748b; font-size: 11pt; margin: 2pt 0 0; }
+  .tag { display: inline-block; background: #e2e8f0; color: #334155; font-size: 8pt; font-weight: 600; padding: 1px 7px; border-radius: 999px; }
+  table { border-collapse: collapse; width: 100%; margin: 6pt 0; font-size: 9.5pt; }
+  th, td { border: 1px solid #e2e8f0; padding: 5px 8px; text-align: left; vertical-align: top; }
+  th { background: #f8fafc; font-weight: 700; color: #334155; }
+  img { width: 68%; display: block; margin: 6pt auto 2pt; border: 1px solid #e2e8f0; border-radius: 8px; }
+  .cap { color: #64748b; font-size: 8.5pt; margin: 0 0 8pt; text-align: center; }
+  .ok { background: #dcfce7; border-left: 4px solid #16a34a; padding: 8px 12px; border-radius: 4px; margin: 8pt 0; font-size: 9.5pt; }
+  .url { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 12px; margin: 8pt 0; font-size: 10pt; }
+  ol, ul { margin: 4pt 0; padding-left: 20px; }
+  li { margin: 2pt 0; }
+  .pagebreak { page-break-before: always; }
+  .small { font-size: 8.5pt; color: #64748b; }
+  a { color: #C5050C; text-decoration: none; }
+</style>
+</head>
+<body>
+
+<h1>Hmong Audio Tool</h1>
+<p class="subtitle">Recording &amp; pronunciation scoring — user guide</p>
+<p class="small">UW‑Madison · Hmong XLS‑R</p>
+
+<div class="ok">
+Three tabs: <b>Collect Data</b> (record words in the browser, download a ZIP),
+<b>Batch Score</b> (upload a recorded session, score every recording),
+<b>Live Eval</b> (compare one reference clip with one candidate clip).
+</div>
+
+<table>
+<tr><th>You want to…</th><th>Tab</th></tr>
+<tr><td>Record speakers saying words and save the audio</td><td><b>Collect Data</b></td></tr>
+<tr><td>Score a whole recorded session at once</td><td><b>Batch Score</b></td></tr>
+<tr><td>Compare one reference with one candidate by hand</td><td><b>Live Eval</b></td></tr>
+</table>
+
+<h2>1 · Collect Data</h2>
+<p>Records word productions and downloads them as a ZIP (audio + metadata).
+Nothing is uploaded — the audio stays in the browser until you press Download.
+Works on laptop, phone, or tablet.</p>
+
+<div class="url">Recording page: <a href="https://fluffy-cactus-f8de18.netlify.app/">https://fluffy-cactus-f8de18.netlify.app/</a></div>
+
+<img src="SHOT/collect_c.png" alt="Collect Data page">
+<p class="cap">The Collect Data tab.</p>
+
+<h3>Steps</h3>
+<ol>
+<li><b>Speaker ID</b> — type an ID (e.g. <code>YX001</code>). Required before downloading.
+    Gender/group and Notes are optional.</li>
+<li>Pick a mode:
+  <ul>
+    <li><b>Single word</b> — type the word, press <b>Record</b>, say it, press <b>Stop</b>.
+        Record again for more takes; each take is saved separately.</li>
+    <li><b>Word list</b> — type words separated by commas (e.g. <code>dhia, dhiab, dhias</code>),
+        set the <b>window</b> (seconds per word) and <b>lead‑in</b> (countdown), press <b>Start</b>.
+        Each word is shown, counted down, recorded for the fixed window, then it advances automatically.</li>
+  </ul>
+</li>
+<li>Recordings appear in the list below — play, re‑record, or delete any of them.</li>
+<li>Press <b>Download ZIP</b> to save <code>&lt;speaker&gt;_&lt;timestamp&gt;.zip</code>.</li>
+</ol>
+
+<h3>What's in the ZIP</h3>
+<ul>
+<li><code>&lt;speaker&gt;/&lt;speaker&gt;__&lt;word&gt;__take1.wav</code> — one WAV per recording</li>
+<li><code>metadata.csv</code> — one row per recording (speaker, word, take, duration, timestamp, …)</li>
+<li><code>metadata.json</code> — the same information as JSON</li>
+</ul>
+
+<div class="pagebreak"></div>
+
+<h2>2 · Batch Score</h2>
+<p>Upload a recorded session and score every recording at once. Each clip is compared with
+the reference recordings of the same word.</p>
+
+<img src="SHOT/batch_c.png" alt="Batch Score page">
+<p class="cap">The Batch Score tab.</p>
+
+<h3>Steps</h3>
+<ol>
+<li>Click <b>Upload session ZIP</b> and pick the ZIP from Collect Data
+    (or <b>Upload folder</b> and pick the unzipped folder).</li>
+<li>The page reads the metadata and shows how many recordings were found.</li>
+<li>Set the <b>Pass threshold</b>, then press <b>Score</b>.</li>
+<li>Results show as a table — word, speaker, take, score, pass/below — with the mean and pass rate.</li>
+<li>Press <b>Download CSV</b> to save the table.</li>
+</ol>
+
+<h3>Reading the scores</h3>
+<table>
+<tr><th>Score</th><td>A similarity value from −1 to 1. Higher means more similar to the reference recordings of that word.</td></tr>
+<tr><th>Pass</th><td>Score ≥ threshold. Adjust the threshold to fit your data.</td></tr>
+<tr><th>Skipped</th><td>The word has no reference recordings, or its audio file was missing.</td></tr>
+</table>
+
+<h2>3 · Live Eval</h2>
+<p>Compare a single reference with a single candidate.</p>
+<img src="SHOT/eval_c.png" alt="Live Eval page">
+<p class="cap">The Live Eval tab.</p>
+<ul>
+<li><b>Reference</b> — type a word to use the built‑in reference recordings, and/or upload or record your own.</li>
+<li><b>Candidate</b> — upload a WAV or record one.</li>
+<li>Press <b>Compute Score</b>.</li>
+</ul>
+
+</body>
+</html>

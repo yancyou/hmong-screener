@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hmong Audio Tool — Local Setup</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm; }
+  * { box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { font-family: -apple-system, "Helvetica Neue", Arial, sans-serif; color: #1e293b; font-size: 10.5pt; line-height: 1.5; margin: 0; }
+  h1 { font-size: 24pt; margin: 0 0 2pt; color: #0f172a; letter-spacing: -0.5px; }
+  h2 { font-size: 15pt; margin: 20pt 0 6pt; color: #C5050C; border-bottom: 2px solid #f1d3d4; padding-bottom: 3px; }
+  h3 { font-size: 12pt; margin: 12pt 0 4pt; color: #0f172a; }
+  p { margin: 4pt 0; }
+  code { background: #f1f5f9; padding: 1px 5px; border-radius: 4px; font-family: "SF Mono", Menlo, monospace; font-size: 9pt; color: #b91c1c; }
+  pre { background: #0f172a; color: #e2e8f0; padding: 9px 12px; border-radius: 6px; font-family: "SF Mono", Menlo, monospace; font-size: 8.8pt; line-height: 1.45; overflow-x: auto; margin: 6pt 0; }
+  pre code { background: none; color: inherit; padding: 0; font-size: inherit; }
+  pre .c { color: #94a3b8; }
+  .subtitle { color: #64748b; font-size: 11pt; margin: 2pt 0 0; }
+  .tag { display: inline-block; background: #e2e8f0; color: #334155; font-size: 8pt; font-weight: 600; padding: 1px 7px; border-radius: 999px; }
+  table { border-collapse: collapse; width: 100%; margin: 6pt 0; font-size: 9.5pt; }
+  th, td { border: 1px solid #e2e8f0; padding: 5px 8px; text-align: left; vertical-align: top; }
+  th { background: #f8fafc; font-weight: 700; color: #334155; }
+  .ok { background: #dcfce7; border-left: 4px solid #16a34a; padding: 8px 12px; border-radius: 4px; margin: 8pt 0; font-size: 9.5pt; }
+  .warn { background: #fef9c3; border-left: 4px solid #ca8a04; padding: 8px 12px; border-radius: 4px; margin: 8pt 0; font-size: 9.5pt; }
+  .url { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 12px; margin: 8pt 0; font-size: 10pt; }
+  ol, ul { margin: 4pt 0; padding-left: 20px; }
+  li { margin: 2pt 0; }
+  .pagebreak { page-break-before: always; }
+  .small { font-size: 8.5pt; color: #64748b; }
+  a { color: #C5050C; text-decoration: none; }
+  .step { font-weight: 700; color: #C5050C; }
+</style>
+</head>
+<body>
+
+<h1>Hmong Audio Tool</h1>
+<p class="subtitle">Running it on your own computer — installation guide</p>
+<p class="small">UW‑Madison · Hmong XLS‑R</p>
+
+<div class="ok">
+Two ways to install. <b>Option A (Docker)</b> is the recommended one — it builds a
+self-contained container, downloads the model for you, and needs nothing installed
+except Docker and Node. <b>Option B (from source)</b> is for when you want to edit
+the code.
+</div>
+
+<table>
+<tr><th>You want to…</th><th>Use</th></tr>
+<tr><td>Just run the tool on your own machine</td><td><b>Option A</b> — Docker</td></tr>
+<tr><td>Run it without internet after setup</td><td><b>Option A</b> — everything is baked into the image</td></tr>
+<tr><td>Change the code, the UI, or the scoring</td><td><b>Option B</b> — from source</td></tr>
+</table>
+
+<h2>Before you start</h2>
+
+<table>
+<tr><th>Requirement</th><th>Needed</th></tr>
+<tr><td>Operating system</td><td>macOS, Windows, or Linux</td></tr>
+<tr><td>Memory (RAM)</td><td><b>8 GB or more</b> — the model needs ~4 GB while running</td></tr>
+<tr><td>Free disk space</td><td><b>~12 GB</b> for the image, model, and dependencies</td></tr>
+<tr><td>Internet</td><td>Needed during setup only (downloads ~3 GB). Not needed afterwards.</td></tr>
+<tr><td>Graphics card</td><td>Not required — it runs on the CPU</td></tr>
+</table>
+
+<p>You will also need the two assets that are too large to ship with the code:</p>
+
+<table>
+<tr><th>Asset</th><th>How you get it</th></tr>
+<tr><td><b>Model checkpoint</b> (~1.3 GB)</td><td>Downloaded <b>automatically</b> during the Docker build. For Option B, download it by hand (link below).</td></tr>
+<tr><td><b>Reference recordings</b> <code>all_data/</code> (~77 MB)</td><td>Download <code>reference_words.zip</code> from Google Drive and unzip it into the project folder. Needed by both options.</td></tr>
+</table>
+
+<div class="url">
+Code: <a href="https://github.com/tianyi0216/hmong_audio_software">https://github.com/tianyi0216/hmong_audio_software</a><br>
+Model: <a href="https://huggingface.co/tianyi0216/hmong-xlsr-checkpoint">https://huggingface.co/tianyi0216/hmong-xlsr-checkpoint</a><br>
+Reference recordings: not public (participant recordings); ask the lab
+</div>
+
+<div class="pagebreak"></div>
+
+<h2>1 · Option A — Docker <span class="tag">RECOMMENDED</span></h2>
+
+<h3>Step 1 — Install Docker Desktop</h3>
+<p>Download it from <a href="https://www.docker.com/products/docker-desktop/">docker.com</a>, install, and open it.
+Wait until the whale icon in the menu bar says “Docker Desktop is running”.</p>
+
+<div class="warn">
+<b>Give Docker enough memory.</b> Open Docker Desktop → <b>Settings</b> → <b>Resources</b>
+and set <b>Memory</b> to at least <b>8 GB</b>. With the default 2 GB the container will
+be killed while the model loads.
+</div>
+
+<h3>Step 2 — Install Node.js</h3>
+<p>Needed once, to build the web page. Get the LTS version from
+<a href="https://nodejs.org/">nodejs.org</a> (version 18 or newer).</p>
+
+<h3>Step 3 — Download the code</h3>
+<pre><code>git clone https://github.com/tianyi0216/hmong_audio_software
+cd hmong_audio_software</code></pre>
+
+<h3>Step 4 — Add the reference recordings</h3>
+<p>Download <code>reference_words.zip</code> from the Google Drive folder and unzip it
+<b>inside this project folder</b>, so that <code>all_data/</code> ends up next to
+<code>api_similarity_server.py</code>:</p>
+<pre><code>hmong_audio_software/
+├── api_similarity_server.py
+├── all_data/            <span class="c">← the unzipped recordings go here</span>
+├── GUI/
+└── Dockerfile</code></pre>
+<p class="small">This is what fills the word-library dropdown (1143 words). Skip it and the
+tool still runs, but the dropdown will be empty.</p>
+
+<h3>Step 5 — Build the web page</h3>
+<pre><code>cd GUI
+npm install
+npm run build
+cd ..</code></pre>
+<p class="small">Creates <code>GUI/dist/</code>. You only do this once, unless you change the interface.</p>
+
+<h3>Step 6 — Build the container</h3>
+<pre><code>docker build -t hmong-audio .</code></pre>
+<p><b>This takes 10–20 minutes</b> and downloads about 3 GB (PyTorch, the dependencies,
+and the 1.3 GB model checkpoint). It is quiet for long stretches — that is normal.
+You only do this once.</p>
+
+<h3>Step 7 — Start it</h3>
+<pre><code>docker run -d --name hmong -p 8080:8080 hmong-audio</code></pre>
+<p>Then open <b>http://localhost:8080</b> in your browser.</p>
+
+<h3>Everyday commands</h3>
+<table>
+<tr><th>What</th><th>Command</th></tr>
+<tr><td>Stop it</td><td><code>docker stop hmong</code></td></tr>
+<tr><td>Start it again</td><td><code>docker start hmong</code></td></tr>
+<tr><td>See the log (useful if something looks stuck)</td><td><code>docker logs -f hmong</code></td></tr>
+<tr><td>Remove it completely</td><td><code>docker rm -f hmong</code></td></tr>
+<tr><td>Use a different port (if 8080 is taken)</td><td><code>docker run -d --name hmong -p 8081:8080 hmong-audio</code></td></tr>
+</table>
+
+<h2>2 · Option B — From source</h2>
+<p>Use this if you want to edit the code. The backend and the web page run as two
+separate programs, in two terminal windows.</p>
+
+<h3>Step 1 — Install Python and Node</h3>
+<p>Python 3.10 (via <a href="https://docs.conda.io/en/latest/miniconda.html">Miniconda</a>)
+and Node.js 18+ (<a href="https://nodejs.org/">nodejs.org</a>).</p>
+
+<h3>Step 2 — Set up the Python environment</h3>
+<pre><code>conda create -n hmong-env python=3.10 -y
+conda activate hmong-env
+pip install -r api_requirements.txt
+pip install -e ./fairseq        <span class="c"># our modified fairseq</span></code></pre>
+
+<h3>Step 3 — Set up the web page</h3>
+<pre><code>cd GUI && npm install && cd ..</code></pre>
+
+<h3>Step 4 — Get the model checkpoint</h3>
+<pre><code>curl -L -o checkpoint_slim.pt \
+  https://huggingface.co/tianyi0216/hmong-xlsr-checkpoint/resolve/main/checkpoint_slim.pt</code></pre>
+<p class="small">~1.3 GB. Also add the reference recordings (Step 4 of Option A) if you have not already.</p>
+
+<h3>Step 5 — Run it</h3>
+<p><b>Terminal 1</b> — the backend (port 8000):</p>
+<pre><code>conda activate hmong-env
+./run_similarity_server.sh checkpoint_slim.pt</code></pre>
+<p><b>Terminal 2</b> — the web page (port 5173):</p>
+<pre><code>cd GUI
+npm run dev</code></pre>
+<p>Then open <b>http://localhost:5173</b>. Leave both terminals open while you use the tool.</p>
+
+<h2>3 · What to expect the first time</h2>
+<ol>
+<li>The page opens immediately.</li>
+<li>The <b>first</b> score you request takes <b>2–3 minutes</b> — the model is loading.
+    Everything after that is fast.</li>
+<li>In the log you should see <code>Loaded 424/424 tensors from checkpoint</code>
+    and <code>Reference library: 1143 words</code>. Those two lines mean it is healthy.</li>
+</ol>
+
+<h2>4 · If something goes wrong</h2>
+<table>
+<tr><th>What you see</th><th>What to do</th></tr>
+<tr><td>The first score spins for a long time</td><td>Normal — the model loads on the first request (2–3 min). Check <code>docker logs -f hmong</code>.</td></tr>
+<tr><td>The word dropdown is empty</td><td><code>all_data/</code> is missing or in the wrong place. It must sit next to <code>api_similarity_server.py</code> <b>before</b> you build the image. Fix it and rebuild.</td></tr>
+<tr><td>The container keeps stopping by itself</td><td>Docker is out of memory. Docker Desktop → Settings → Resources → Memory → <b>8 GB</b>.</td></tr>
+<tr><td><code>port is already allocated</code></td><td>Something else uses 8080. Use <code>-p 8081:8080</code> and open <code>localhost:8081</code>.</td></tr>
+<tr><td>The build fails while downloading the model</td><td>A network hiccup. Run <code>docker build</code> again — finished steps are cached.</td></tr>
+<tr><td><code>ModuleNotFoundError: fairseq</code> (Option B)</td><td>You missed <code>pip install -e ./fairseq</code>, or the conda environment is not active.</td></tr>
+<tr><td><code>Checkpoint not found</code> (Option B)</td><td>Pass the correct path: <code>./run_similarity_server.sh /full/path/to/checkpoint_slim.pt</code></td></tr>
+</table>
+
+<h2>5 · Letting others on your network use it</h2>
+<p>With Option A the container already listens on your whole network. Find your
+computer's local IP address (macOS: <b>System Settings → Wi‑Fi → Details</b>;
+Windows: <code>ipconfig</code>), then others on the same Wi‑Fi can open:</p>
+<pre><code>http://&lt;your-ip-address&gt;:8080</code></pre>
+<p class="small">Example: <code>http://192.168.1.42:8080</code>. This works on your local network only —
+it is not reachable from the internet.</p>
+
+</body>
+</html>

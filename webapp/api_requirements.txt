@@ -1,0 +1,20 @@
+fastapi
+uvicorn[standard]
+python-multipart
+pydantic
+numpy>=1.21.3
+soundfile
+scipy
+torch>=1.13
+torchaudio>=0.8.0
+# fairseq (vendored in this repo) expects hydra/omegaconf 2.0.x
+hydra-core==1.0.7
+omegaconf==2.0.6
+antlr4-python3-runtime==4.8
+regex
+sacrebleu>=1.4.12
+tqdm
+bitarray
+packaging
+scikit-learn
+cffi
